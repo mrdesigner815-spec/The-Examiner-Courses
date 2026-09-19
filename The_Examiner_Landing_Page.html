@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Examiner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800;900&family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0F1B33;
+    --navy-2:#16223f;
+    --navy-3:#1c2a4d;
+    --gold:#B4872E;
+    --gold-2:#d9ab52;
+    --paper:#FAF7EF;
+    --paper-2:#efe8d6;
+    --green:#2F6F52;
+    --green-2:#e5f0ea;
+    --ink:#0F1B33;
+    --muted:#5b6478;
+    --card-bg:#ffffff;
+    --border:rgba(15,27,51,0.12);
+    --shadow:0 18px 40px -20px rgba(15,27,51,0.35);
+    --bg: var(--paper);
+    --surface: var(--card-bg);
+    --text: var(--ink);
+    --text-muted: var(--muted);
+    --hero-bg: var(--navy);
+    --hero-text: var(--paper);
+    --tag-text: var(--navy);
+    --green-text: var(--green);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0b1220;
+      --surface:#121b32;
+      --text:#EDE7D8;
+      --text-muted:#a9b0c4;
+      --border:rgba(255,255,255,0.10);
+      --paper-2:#182238;
+      --green-2:#12261d;
+      --hero-bg:#070d1a;
+      --hero-text:#F4EFE1;
+      --tag-text:#d9ab52;
+      --green-text:#7fd7ab;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0b1220;
+    --surface:#121b32;
+    --text:#EDE7D8;
+    --text-muted:#a9b0c4;
+    --tag-text:#d9ab52;
+    --green-text:#7fd7ab;
+    --border:rgba(255,255,255,0.10);
+    --paper-2:#182238;
+    --green-2:#12261d;
+    --hero-bg:#070d1a;
+    --hero-text:#F4EFE1;
+  }
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Tajawal',system-ui,sans-serif;
+    direction:rtl;
+    text-align:right;
+    line-height:1.65;
+  }
+  h1,h2,h3,h4{
+    font-family:'Cairo',system-ui,sans-serif;
+    color:var(--text);
+    text-wrap:balance;
+    margin:0;
+  }
+  .page{padding:0 16px;max-width:1120px;margin:0 auto;}
+  img{max-width:100%;}
+  button{font-family:inherit;cursor:pointer;}
+  [hidden]{display:none!important;}
+  a{color:inherit;}
+  .view{display:none;}
+  .view.active{display:block;}
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding-block:18px;gap:12px;flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Cairo';font-weight:800;font-size:1.15rem;}
+  .brand-badge{
+    width:38px;height:38px;border-radius:11px;background:var(--navy);
+    display:flex;align-items:center;justify-content:center;flex:none;
+  }
+  .brand small{display:block;font-family:'Tajawal';font-weight:500;font-size:.68rem;color:var(--text-muted);}
+  .topbar-cta{
+    background:var(--gold);color:var(--navy);font-weight:800;border:none;
+    padding:10px 18px;border-radius:999px;font-size:.9rem;white-space:nowrap;
+    box-shadow:0 8px 18px -8px rgba(180,135,46,.6);
+  }
+
+  /* ---------- hero / hook poster ---------- */
+  .hero{
+    background:
+      radial-gradient(120% 140% at 100% 0%, rgba(180,135,46,.35), transparent 55%),
+      radial-gradient(120% 140% at 0% 100%, rgba(47,111,82,.30), transparent 55%),
+      var(--hero-bg);
+    color:var(--hero-text);
+    border-radius:28px;
+    padding:38px 24px 30px;
+    position:relative;
+    overflow:hidden;
+    box-shadow:var(--shadow);
+  }
+  .hero-eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    background:rgba(180,135,46,.18);border:1px solid rgba(217,171,82,.45);
+    color:var(--gold-2);font-weight:800;font-size:.78rem;
+    padding:7px 14px;border-radius:999px;margin-bottom:18px;
+  }
+  .hero-eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--gold-2);animation:pulse 1.6s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+
+  /* ---------- crazy hook bar (top marquee) ---------- */
+  .hook-bar{
+    background:linear-gradient(90deg,var(--gold),var(--gold-2),var(--gold));
+    background-size:200% 100%;
+    animation:hookShine 5s linear infinite;
+    color:var(--navy);border-bottom:2px solid var(--navy);
+    overflow:hidden;white-space:nowrap;padding:9px 0;position:relative;z-index:20;
+  }
+  .hook-bar .track{display:inline-flex;animation:hookMarquee 24s linear infinite;}
+  .hook-bar .track span{
+    padding:0 26px;font-family:'Cairo';font-weight:900;font-size:.82rem;letter-spacing:.2px;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  @keyframes hookMarquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+  @keyframes hookShine{0%{background-position:0% 0%;}100%{background-position:200% 0%;}}
+
+  /* ---------- hero hook ribbon ---------- */
+  .hero-ribbon{
+    position:absolute;top:18px;left:-42px;
+    background:linear-gradient(90deg,#e0473f,#ff7a56);
+    color:#fff;font-family:'Cairo';font-weight:900;font-size:.72rem;
+    padding:7px 46px;transform:rotate(-38deg);
+    box-shadow:0 10px 18px -8px rgba(224,71,63,.7);
+    animation:ribbonPulse 1.8s ease-in-out infinite;
+    z-index:5;
+  }
+  @keyframes ribbonPulse{0%,100%{transform:rotate(-38deg) scale(1);}50%{transform:rotate(-38deg) scale(1.06);}}
+  .hero h1{font-size:clamp(1.7rem,4.6vw,2.75rem);font-weight:900;color:#fff;line-height:1.28;max-width:16ch;}
+  .hero h1 .accent{color:var(--gold-2);}
+  .hero p.sub{
+    color:rgba(250,247,239,.82);font-size:clamp(.95rem,2vw,1.12rem);
+    max-width:52ch;margin-top:14px;
+  }
+  .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px;}
+  .btn-primary{
+    background:var(--gold);color:var(--navy);border:none;font-weight:800;
+    padding:14px 24px;border-radius:14px;font-size:1rem;
+    box-shadow:0 12px 24px -10px rgba(180,135,46,.7);
+  }
+  .btn-ghost{
+    background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.28);
+    padding:14px 22px;border-radius:14px;font-weight:700;font-size:.95rem;
+  }
+  .hero-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:22px;align-items:center;}
+  @media (max-width:760px){.hero-grid{grid-template-columns:1fr;}}
+
+  /* robot mascot */
+  .robot-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;position:relative;}
+  .speech-bubble{
+    background:#fff;color:var(--navy);border-radius:16px;padding:12px 16px;
+    font-weight:700;font-size:.88rem;max-width:230px;text-align:center;
+    box-shadow:0 10px 24px -8px rgba(0,0,0,.35);position:relative;min-height:44px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .speech-bubble::after{
+    content:"";position:absolute;bottom:-9px;left:50%;transform:translateX(-50%);
+    border-width:9px 9px 0 9px;border-style:solid;border-color:#fff transparent transparent transparent;
+  }
+  .robot-svg{filter:drop-shadow(0 14px 24px rgba(0,0,0,.35));animation:float 3.2s ease-in-out infinite;}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+  /* trust bar */
+  .trust-bar{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:26px;
+  }
+  @media (max-width:700px){.trust-bar{grid-template-columns:repeat(2,1fr);}}
+  .trust-item{
+    background:var(--surface);border:1px solid var(--border);border-radius:16px;
+    padding:16px 12px;text-align:center;
+  }
+  .trust-item strong{display:block;font-family:'Cairo';font-size:1.15rem;color:var(--gold);}
+  .trust-item span{font-size:.78rem;color:var(--text-muted);}
+
+  /* section titles */
+  .section{padding-block:44px 8px;}
+  .section-head{max-width:60ch;margin-bottom:26px;}
+  .section-head .kicker{
+    display:inline-block;color:var(--green-text);font-weight:800;font-size:.8rem;
+    background:var(--green-2);padding:5px 12px;border-radius:999px;margin-bottom:10px;
+  }
+  .section-head h2{font-size:clamp(1.4rem,3vw,1.9rem);}
+  .section-head p{color:var(--text-muted);margin-top:8px;}
+
+  /* features */
+  .feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  @media (max-width:800px){.feature-grid{grid-template-columns:1fr;}}
+  .feature-card{
+    background:var(--surface);border:1px solid var(--border);border-radius:20px;
+    padding:22px;display:flex;flex-direction:column;gap:12px;
+  }
+  .feature-card .icon-badge{
+    width:46px;height:46px;border-radius:13px;background:var(--paper-2);
+    display:flex;align-items:center;justify-content:center;flex:none;
+  }
+  .feature-card.highlight{border-color:var(--gold);background:linear-gradient(160deg,var(--surface),var(--paper-2));}
+  .feature-card h3{font-size:1.05rem;}
+  .feature-card p{color:var(--text-muted);font-size:.88rem;}
+
+  /* course grid */
+  .course-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:18px;
+  }
+  @media (max-width:900px){.course-grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:600px){.course-grid{grid-template-columns:1fr;}}
+  .course-card{
+    background:var(--surface);border:1px solid var(--border);border-radius:20px;
+    padding:20px;display:flex;flex-direction:column;gap:12px;position:relative;
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .course-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);}
+  .course-card .tag{
+    align-self:flex-start;background:var(--paper-2);color:var(--tag-text);
+    font-weight:800;font-size:.72rem;padding:5px 11px;border-radius:999px;
+  }
+  .course-card h3{font-size:1.18rem;}
+  .course-card p.desc{color:var(--text-muted);font-size:.88rem;flex:1;}
+  .price-row{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .price-old{color:var(--text-muted);text-decoration:line-through;font-size:.92rem;font-variant-numeric:tabular-nums;}
+  .price-new{font-family:'Cairo';font-weight:900;font-size:1.5rem;color:var(--green-text);font-variant-numeric:tabular-nums;}
+  .price-new small{font-size:.65rem;font-weight:700;color:var(--text-muted);}
+  .save-badge{
+    background:var(--green-2);color:var(--green-text);font-weight:800;font-size:.72rem;
+    padding:4px 10px;border-radius:999px;font-variant-numeric:tabular-nums;
+  }
+  .course-card .cta{
+    background:var(--navy);color:#fff;border:none;padding:12px;border-radius:12px;
+    font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .course-card .cta:hover{background:var(--navy-2);}
+
+  /* course detail view */
+  .back-btn{
+    display:inline-flex;align-items:center;gap:8px;background:var(--surface);
+    border:1px solid var(--border);padding:9px 16px;border-radius:999px;
+    font-weight:700;font-size:.88rem;margin-top:18px;
+  }
+  .course-hero{
+    margin-top:16px;background:var(--navy);color:#fff;border-radius:24px;
+    padding:28px 22px;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;
+    align-items:center;
+  }
+  .course-hero .tag-line{color:var(--gold-2);font-weight:800;font-size:.85rem;margin-bottom:8px;}
+  .course-hero h2{color:#fff;font-size:clamp(1.4rem,3.4vw,2rem);max-width:22ch;}
+  .course-hero p{color:rgba(250,247,239,.8);margin-top:8px;max-width:44ch;font-size:.94rem;}
+  .detail-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:20px;margin-top:22px;}
+  @media (max-width:800px){.detail-grid{grid-template-columns:1fr;}}
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:22px;}
+  .panel h3{font-size:1.05rem;margin-bottom:14px;}
+  .includes-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:11px;}
+  .includes-list li{display:flex;gap:10px;align-items:flex-start;font-size:.92rem;}
+  .includes-list li svg{flex:none;margin-top:2px;}
+  .pricing-panel{
+    background:linear-gradient(160deg,var(--navy),var(--navy-3));
+    color:#fff;border-radius:20px;padding:22px;position:sticky;top:16px;
+    display:flex;flex-direction:column;gap:14px;
+  }
+  .pricing-panel .old{color:rgba(255,255,255,.55);text-decoration:line-through;font-size:1rem;font-variant-numeric:tabular-nums;}
+  .pricing-panel .new{font-family:'Cairo';font-weight:900;font-size:2.3rem;color:var(--gold-2);font-variant-numeric:tabular-nums;}
+  .pricing-panel .new small{font-size:.85rem;color:rgba(255,255,255,.7);font-weight:700;}
+  .pricing-panel .save{background:rgba(47,111,82,.35);color:#bfe6d2;font-weight:800;font-size:.8rem;padding:6px 12px;border-radius:999px;width:fit-content;}
+  .pricing-panel .note{font-size:.78rem;color:rgba(255,255,255,.65);}
+
+  /* registration form */
+  .reg-form{display:flex;flex-direction:column;gap:16px;max-width:520px;}
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field label{font-weight:700;font-size:.86rem;}
+  .field .hint{font-weight:500;font-size:.75rem;color:var(--text-muted);}
+  .field input, .field select{
+    padding:12px 13px;border-radius:11px;border:1px solid var(--border);
+    background:var(--bg);color:var(--text);font-family:inherit;font-size:.92rem;
+  }
+  .field input:focus, .field select:focus{outline:2px solid var(--gold);outline-offset:1px;}
+  .reg-submit{margin-top:4px;}
+  .reg-status{
+    border-radius:14px;padding:14px 16px;font-size:.86rem;margin-top:6px;display:none;
+  }
+  .reg-status.show{display:block;}
+  .reg-status.ok{background:var(--green-2);color:var(--green-text);}
+  .reg-status.err{background:rgba(180,60,60,.12);color:#b23b3b;}
+  .status-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+  .status-actions a{
+    display:inline-flex;align-items:center;justify-content:center;
+    background:var(--navy);color:#fff;text-decoration:none;
+    padding:10px 16px;border-radius:10px;font-weight:800;font-size:.85rem;
+  }
+  .status-actions a:last-child{background:#25D366;}
+  .disclaimer-box{
+    background:var(--paper-2);border:1px dashed var(--border);border-radius:14px;
+    padding:12px 14px;font-size:.8rem;color:var(--text-muted);margin-top:6px;
+  }
+
+  /* CTA banner */
+  .cta-banner{
+    margin-block:40px;background:var(--gold);color:var(--navy);border-radius:24px;
+    padding:26px 22px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;
+  }
+  .cta-banner h3{font-size:1.2rem;}
+  .cta-banner .btn-primary{background:var(--navy);color:#fff;box-shadow:none;}
+
+  footer{padding:30px 0 40px;color:var(--text-muted);font-size:.82rem;text-align:center;}
+
+  /* ---------- AI chat widget ---------- */
+  .chat-launcher{
+    position:fixed;bottom:18px;left:18px;z-index:40;
+    width:60px;height:60px;border-radius:50%;background:var(--gold);
+    border:none;box-shadow:0 14px 28px -10px rgba(180,135,46,.7);
+    display:flex;align-items:center;justify-content:center;
+    padding:0 env(safe-area-inset-left,0px) env(safe-area-inset-bottom,0px) 0;
+  }
+  .chat-launcher .ping{
+    position:absolute;top:-3px;right:-3px;width:14px;height:14px;border-radius:50%;
+    background:var(--green);border:2px solid var(--paper);
+  }
+  .chat-panel{
+    position:fixed;bottom:88px;left:18px;z-index:41;width:min(340px,calc(100vw - 32px));
+    max-height:min(560px,70vh);background:var(--surface);border:1px solid var(--border);
+    border-radius:20px;box-shadow:0 24px 60px -18px rgba(0,0,0,.45);
+    display:flex;flex-direction:column;overflow:hidden;
+  }
+  .chat-head{
+    background:var(--navy);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px;
+  }
+  .chat-head strong{font-family:'Cairo';font-size:.95rem;display:block;}
+  .chat-head span{font-size:.72rem;color:rgba(255,255,255,.7);}
+  .chat-close{margin-inline-start:auto;background:rgba(255,255,255,.12);border:none;color:#fff;
+    width:28px;height:28px;border-radius:50%;font-size:.9rem;}
+  .chat-disclaimer{
+    background:var(--paper-2);color:var(--text-muted);font-size:.72rem;padding:9px 14px;border-bottom:1px solid var(--border);
+  }
+  .chat-body{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--bg);}
+  .msg{max-width:85%;padding:10px 13px;border-radius:14px;font-size:.86rem;line-height:1.55;}
+  .msg.bot{background:var(--surface);border:1px solid var(--border);align-self:flex-start;border-bottom-left-radius:4px;}
+  .msg.user{background:var(--navy);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
+  .quick-replies{display:flex;flex-wrap:wrap;gap:7px;padding:0 14px 12px;background:var(--bg);}
+  .chip{
+    background:var(--surface);border:1px solid var(--border);border-radius:999px;
+    padding:7px 12px;font-size:.76rem;font-weight:700;color:var(--text);
+  }
+  .chip:hover{border-color:var(--gold);}
+  .chat-input-row{display:flex;gap:8px;padding:12px;border-top:1px solid var(--border);background:var(--surface);}
+  .chat-input-row input{
+    flex:1;border:1px solid var(--border);border-radius:12px;padding:10px 12px;
+    background:var(--bg);color:var(--text);font-family:inherit;font-size:.86rem;
+  }
+  .chat-send{background:var(--gold);border:none;color:var(--navy);width:40px;height:40px;border-radius:12px;flex:none;display:flex;align-items:center;justify-content:center;}
+
+  @media (prefers-reduced-motion: reduce){
+    .robot-svg,.hero-eyebrow .dot,.hook-bar,.hook-bar .track,.hero-ribbon{animation:none!important;}
+  }
+  @media (max-width:520px){
+    .hero-ribbon{font-size:.62rem;padding:5px 34px;top:12px;left:-32px;}
+  }
+</style>
+</head>
+<body>
+<div class="page" dir="rtl" lang="ar">
+
+  <div class="hook-bar" aria-hidden="true">
+    <div class="track">
+      <span>🔥 عرض الإطلاق شغّال دلوقتي — الأسعار تبدأ من 900 ريال بس</span>
+      <span>⏳ مقاعد كل مجموعة محدودة جدًا وبتُحجز أول بأول</span>
+      <span>🎯 اختبار تجريبي كامل + تدريب حي + تقرير أداء فردي</span>
+      <span>🚀 سجّل مكانك دلوقتي قبل ما يقفل العرض</span>
+      <span>🔥 عرض الإطلاق شغّال دلوقتي — الأسعار تبدأ من 900 ريال بس</span>
+      <span>⏳ مقاعد كل مجموعة محدودة جدًا وبتُحجز أول بأول</span>
+      <span>🎯 اختبار تجريبي كامل + تدريب حي + تقرير أداء فردي</span>
+      <span>🚀 سجّل مكانك دلوقتي قبل ما يقفل العرض</span>
+    </div>
+  </div>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-badge">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h10" stroke="#FAF7EF" stroke-width="2.4" stroke-linecap="round"/></svg>
+      </span>
+      <span>The Examiner<small>بإشراف GATMentor — الأستاذ حمادة</small></span>
+    </div>
+    <button class="topbar-cta" data-action="open-chat">اسأل المساعد الذكي</button>
+  </header>
+
+  <!-- ======================= HOME VIEW ======================= -->
+  <section id="view-home" class="view active">
+
+    <div class="hero">
+      <span class="hero-ribbon">عرض لفترة محدودة</span>
+      <div class="hero-grid">
+        <div>
+          <span class="hero-eyebrow"><span class="dot"></span> عرض إطلاق The Examiner — مقاعد محدودة</span>
+          <h1>لا تدخل اختبارك وأنت <span class="accent">بتخمّن</span>. جرّبه بنفس شكله، وجهّز له صح</h1>
+          <p class="sub">7 اختبارات ودورات (STEP، IELTS، TOEFL، ITC، SAT English، English General، GAT English) بمحاكاة كاملة لنمط الاختبار الحقيقي، وتدريب حي مباشر مع الأستاذ حمادة، وتقرير أداء يوضح نقاط ضعفك بالضبط.</p>
+          <div class="hero-actions">
+            <button class="btn-primary" data-action="scroll-courses">اختر اختبارك وشوف العرض</button>
+            <button class="btn-ghost" data-action="open-chat">عندي سؤال قبل ما أقرر</button>
+          </div>
+        </div>
+        <div class="robot-wrap">
+          <div class="speech-bubble" id="robotBubble">أهلاً! أنا المساعد الذكي لـ The Examiner 🤖</div>
+          <svg class="robot-svg" width="150" height="150" viewBox="0 0 150 150" fill="none">
+            <rect x="45" y="20" width="60" height="14" rx="7" fill="#B4872E"/>
+            <rect x="70" y="4" width="10" height="18" rx="5" fill="#B4872E"/>
+            <circle cx="75" cy="8" r="6" fill="#2F6F52"/>
+            <rect x="32" y="34" width="86" height="70" rx="22" fill="#FAF7EF"/>
+            <rect x="46" y="52" width="24" height="20" rx="10" fill="#0F1B33"/>
+            <rect x="80" y="52" width="24" height="20" rx="10" fill="#0F1B33"/>
+            <circle cx="58" cy="62" r="4" fill="#FAF7EF"/>
+            <circle cx="92" cy="62" r="4" fill="#FAF7EF"/>
+            <rect x="58" y="82" width="34" height="8" rx="4" fill="#B4872E"/>
+            <rect x="20" y="112" width="110" height="30" rx="15" fill="#16223f"/>
+            <rect x="0" y="66" width="18" height="34" rx="9" fill="#16223f"/>
+            <rect x="132" y="66" width="18" height="34" rx="9" fill="#16223f"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="trust-bar">
+        <div class="trust-item"><strong>7</strong><span>اختبارات ودورات جاهزة</span></div>
+        <div class="trust-item"><strong>حي</strong><span>تدريب مباشر مع الأستاذ حمادة</span></div>
+        <div class="trust-item"><strong>فردي</strong><span>تحليل أداء لكل طالب</span></div>
+        <div class="trust-item"><strong>شهادة</strong><span>إتمام معتمدة من GATMentor</span></div>
+      </div>
+    </div>
+
+    <div class="section" id="featuresSection">
+      <div class="section-head">
+        <span class="kicker">مش مجرد اختبار</span>
+        <h2>هتعرف مستواك بالظبط، مش هتخمّنه</h2>
+        <p>كل دورة مبنية على محاكاة حقيقية للاختبار، ومتابعة واضحة لمستواك من أول يوم لحد الاختبار الفعلي.</p>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-card highlight">
+          <span class="icon-badge">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 19V10M10 19V5M16 19V13M22 19V8" stroke="#B4872E" stroke-width="2.2" stroke-linecap="round"/></svg>
+          </span>
+          <h3>تحليل الأداء وتقرير المستوى</h3>
+          <p>بعد كل اختبار (Mock Test أو Practice Quiz)، بنحلل إجاباتك قسم بقسم، ونسلّمك تقرير واضح يوضح مستواك الحالي بالظبط، نقاط قوتك، والمهارات المحتاجة تركيز أكتر قبل الاختبار الحقيقي.</p>
+        </div>
+        <div class="feature-card">
+          <span class="icon-badge">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="14" rx="2" stroke="#B4872E" stroke-width="2.2"/><path d="M7 20h10M12 18v2" stroke="#B4872E" stroke-width="2.2" stroke-linecap="round"/></svg>
+          </span>
+          <h3>محاكاة حقيقية للاختبار</h3>
+          <p>نفس شكل وتوقيت الاختبار الرسمي بالظبط، عشان تدخل يوم الاختبار الحقيقي وانت مش بتجرّب حاجة لأول مرة.</p>
+        </div>
+        <div class="feature-card">
+          <span class="icon-badge">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.4" stroke="#B4872E" stroke-width="2.2"/><path d="M5 20c1.5-4 4.5-6 7-6s5.5 2 7 6" stroke="#B4872E" stroke-width="2.2" stroke-linecap="round"/></svg>
+          </span>
+          <h3>تدريب حي ومتابعة فردية</h3>
+          <p>حصص Live مباشرة مع الأستاذ حمادة، مش تسجيلات جاهزة، مع متابعة شخصية لكل طالب عبر واتساب.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="coursesSection">
+      <div class="section-head">
+        <span class="kicker">عروض الإطلاق</span>
+        <h2>اختر الاختبار اللي بتحضّر له</h2>
+        <p>كل عرض متاح لفترة محدودة، والمقاعد بحسب طاقة كل مجموعة. اضغط "اطلب التفاصيل" على أي اختبار عشان تشوف صفحته الكاملة.</p>
+      </div>
+
+      <div class="course-grid" id="courseGrid"></div>
+    </div>
+
+    <div class="cta-banner">
+      <div>
+        <h3>قررت؟ سجّل مكانك دلوقتي</h3>
+        <p style="margin-top:4px;font-size:.9rem;">عبّي استمارة التسجيل بسرعة (اسمك، مدرستك، مرحلتك الدراسية، ورقم تواصلك)، وهنأكدلك التسجيل بنفسنا.</p>
+      </div>
+      <button class="btn-primary" data-action="show-register">سجّل الآن</button>
+    </div>
+
+    <div class="cta-banner">
+      <div>
+        <h3>مش متأكد أي اختبار يناسبك؟</h3>
+        <p style="margin-top:4px;font-size:.9rem;">اسأل المساعد الذكي، وهو هيوجهك للاختبار الصح — أو كلّم الأستاذ حمادة مباشرة على واتساب.</p>
+      </div>
+      <button class="btn-primary" data-action="open-chat">اسأل المساعد الذكي الآن</button>
+    </div>
+
+    <footer>
+      جميع الأسعار بالريال وتشمل الوصول للاختبار التجريبي، التدريب الحي، وتقرير الأداء. للتواصل المباشر: واتساب 0542914561.
+    </footer>
+  </section>
+
+  <!-- ======================= COURSE VIEWS ======================= -->
+  <div id="courseViewsRoot"></div>
+  <div id="registerViewRoot"></div>
+
+</div>
+
+<!-- ======================= CHAT WIDGET ======================= -->
+<button class="chat-launcher" id="chatLauncher" data-action="open-chat" aria-label="افتح المساعد الذكي">
+  <span class="ping"></span>
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><rect x="4" y="7" width="16" height="11" rx="4" fill="#0F1B33"/><rect x="9" y="2" width="2" height="5" rx="1" fill="#0F1B33"/><circle cx="9" cy="12.5" r="1.6" fill="#FAF7EF"/><circle cx="15" cy="12.5" r="1.6" fill="#FAF7EF"/></svg>
+</button>
+
+<div class="chat-panel" id="chatPanel" hidden>
+  <div class="chat-head">
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><rect x="4" y="7" width="16" height="11" rx="4" fill="#B4872E"/><rect x="9" y="2" width="2" height="5" rx="1" fill="#B4872E"/><circle cx="9" cy="12.5" r="1.6" fill="#0F1B33"/><circle cx="15" cy="12.5" r="1.6" fill="#0F1B33"/></svg>
+    <span>
+      <strong>مساعد The Examiner الذكي</strong>
+      <span>متاح دلوقتي</span>
+    </span>
+    <button class="chat-close" data-action="close-chat">✕</button>
+  </div>
+  <div class="chat-disclaimer">بجاوب على أسئلة الدورات والأسعار. مفيش عندي صلاحية أعدّل الخصومات، وشرح أي جزء دراسي بيتحوّل مباشرة للأستاذ حمادة.</div>
+  <div class="chat-body" id="chatBody"></div>
+  <div class="quick-replies" id="quickReplies"></div>
+  <div class="chat-input-row">
+    <input id="chatInput" type="text" placeholder="اكتب سؤالك هنا…">
+    <button class="chat-send" data-action="send-chat" aria-label="إرسال">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 4L10 14M20 4L13.5 20L10 14M20 4L4 10.5L10 14" stroke="#0F1B33" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+(function(){
+
+  var courses = [
+    {
+      id:"itc", tag:"تأسيس شامل", name:"ITC", full:"اختبار ITC",
+      tagline:"أساس الكفاءة اللغوية قبل أي اختبار متخصص",
+      desc:"مراجعة وتأسيس شاملة لأساسيات اللغة بأسلوب اختبار موحّد ونتائج واضحة لكل قسم.",
+      hours:8, sessions:4,
+      includes:["اختبار Mock Test تجريبي كامل بنفس توقيت الاختبار الحقيقي","اختبار Practice Quiz تدريبي إضافي (30 سؤالًا)","4 حصص تدريب حي مباشر مع الأستاذ حمادة","تحليل أداء تفصيلي لكل قسم لغوي وتسليمك تقرير واضح عن مستواك الحالي","متابعة فردية عبر واتساب","شهادة إتمام معتمدة من GATMentor"],
+      original:1700, offer:900
+    },
+    {
+      id:"step", tag:"دراسات عليا", name:"STEP", full:"اختبار STEP",
+      tagline:"للمتقدمين للدراسات العليا والقبول الجامعي",
+      desc:"تدريب مكثف على أنماط أسئلة STEP الفعلية بالجامعات السعودية، مع استراتيجيات حل سريعة.",
+      hours:10, sessions:5,
+      includes:["اختبار Mock Test تجريبي كامل بنفس توقيت الاختبار الحقيقي","اختبار Practice Quiz تدريبي إضافي (30 سؤالًا)","5 حصص تدريب حي مباشر مع الأستاذ حمادة","تحليل أداء تفصيلي لكل قسم لغوي وتسليمك تقرير واضح عن مستواك الحالي","متابعة فردية عبر واتساب","شهادة إتمام معتمدة من GATMentor"],
+      original:1800, offer:950
+    },
+    {
+      id:"sat", tag:"جامعات أمريكية", name:"SAT English", full:"اختبار SAT English",
+      tagline:"للمتقدمين للجامعات الأمريكية والمنح الدراسية",
+      desc:"تركيز على القراءة النقدية والقواعد والتراكيب بنفس أسلوب أسئلة SAT الرسمي.",
+      hours:12, sessions:6,
+      includes:["اختبار Mock Test تجريبي كامل بنفس توقيت الاختبار الحقيقي","اختبار Practice Quiz تدريبي إضافي (30 سؤالًا)","6 حصص تدريب حي مباشر مع الأستاذ حمادة","تحليل أداء تفصيلي لكل قسم لغوي وتسليمك تقرير واضح عن مستواك الحالي","متابعة فردية عبر واتساب","شهادة إتمام معتمدة من GATMentor"],
+      original:1900, offer:1000
+    },
+    {
+      id:"toefl", tag:"قبول دولي", name:"TOEFL iBT", full:"اختبار TOEFL iBT",
+      tagline:"للتقديم على الجامعات الأمريكية والكندية",
+      desc:"تدريب كامل على النمط الإلكتروني للاختبار (iBT) مع استراتيجيات إدارة الوقت للمهارات الأربع.",
+      hours:14, sessions:7,
+      includes:["اختبار Mock Test تجريبي كامل بنفس توقيت الاختبار الحقيقي","اختبار Practice Quiz تدريبي إضافي (30 سؤالًا)","7 حصص تدريب حي مباشر مع الأستاذ حمادة","تحليل أداء تفصيلي لكل مهارة (استماع، قراءة، كتابة، محادثة) وتسليمك تقرير واضح عن مستواك الحالي","متابعة فردية عبر واتساب","شهادة إتمام معتمدة من GATMentor"],
+      original:2100, offer:1050
+    },
+    {
+      id:"ielts", tag:"الأكثر طلبًا", name:"IELTS Academic", full:"اختبار IELTS Academic",
+      tagline:"للقبول الجامعي والهجرة الأكاديمية",
+      desc:"تغطية كاملة للمهارات الأربع بمحاكاة طبق الأصل لتنسيق الآيلتس الأكاديمي وتقييم النطاق (Band Score).",
+      hours:14, sessions:7,
+      includes:["اختبار Mock Test تجريبي كامل بنفس توقيت الاختبار الحقيقي","اختبار Practice Quiz تدريبي إضافي (30 سؤالًا)","7 حصص تدريب حي مباشر مع الأستاذ حمادة","تحليل أداء تفصيلي مع تقدير Band Score تقريبي وتسليمك تقرير واضح عن مستواك الحالي","متابعة فردية عبر واتساب","شهادة إتمام معتمدة من GATMentor"],
+      original:2200, offer:1100
+    },
+    {
+      id:"general", tag:"المسار الأشمل", name:"English General", full:"دورة English General",
+      tagline:"التأسيس اللغوي الشامل قبل أي اختبار متخصص",
+      desc:"المسار الأشمل بين الدورات الست: قواعد، مفردات، قراءة واستيعاب — نقطة انطلاق قوية لأي اختبار لاحق.",
+      hours:16, sessions:8,
+      includes:["اختبار Mock Test تجريبي كامل بنفس توقيت الاختبار الحقيقي","اختبار Practice Quiz تدريبي إضافي (30 سؤالًا)","8 حصص تدريب حي مباشر مع الأستاذ حمادة","تحليل أداء تفصيلي لكل قسم لغوي وتسليمك تقرير واضح عن مستواك الحالي","متابعة فردية عبر واتساب","شهادة إتمام معتمدة من GATMentor"],
+      original:2300, offer:1200
+    },
+    {
+      id:"gat", tag:"استعداد القدرات", name:"GAT English", full:"دورة GAT English",
+      tagline:"للاستعداد للقسم اللفظي في اختبار القدرات العامة (قدرات)",
+      desc:"تغطية شاملة للقسم اللفظي في اختبار القدرات: المفردات، القواعد، الروابط، الفهم القرائي، والاستنتاج — بأسلوب أسئلة القدرات الرسمي.",
+      hours:10, sessions:5,
+      includes:["اختبار Mock Test تجريبي كامل بنفس نمط القسم اللفظي في القدرات","اختبار Practice Quiz تدريبي إضافي (30 سؤالًا)","5 حصص تدريب حي مباشر مع الأستاذ حمادة","تحليل أداء تفصيلي لمهارات المفردات والقواعد والفهم القرائي وتسليمك تقرير واضح عن مستواك الحالي","متابعة فردية عبر واتساب","شهادة إتمام معتمدة من GATMentor"],
+      original:1750, offer:925
+    }
+  ];
+
+  var WHATSAPP = "0542914561";
+  var iconCheck = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#2F6F52"/><path d="M7 12.5l3 3 7-7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  function pct(c){ return Math.round((1 - c.offer/c.original)*100); }
+  function save(c){ return c.original - c.offer; }
+
+  function renderGrid(){
+    var grid = document.getElementById('courseGrid');
+    grid.innerHTML = courses.map(function(c){
+      return '' +
+      '<div class="course-card">' +
+        '<span class="tag">'+c.tag+'</span>' +
+        '<h3>'+c.full+'</h3>' +
+        '<p class="desc">'+c.desc+'</p>' +
+        '<div class="price-row">' +
+          '<span class="price-old">'+c.original+' ريال</span>' +
+          '<span class="price-new">'+c.offer+' <small>ريال</small></span>' +
+          '<span class="save-badge">خصم '+pct(c)+'%</span>' +
+        '</div>' +
+        '<button class="cta" data-action="show-course" data-course="'+c.id+'">اطلب التفاصيل</button>' +
+      '</div>';
+    }).join('');
+  }
+
+  function renderCourseViews(){
+    var root = document.getElementById('courseViewsRoot');
+    root.innerHTML = courses.map(function(c){
+      return '' +
+      '<section id="view-'+c.id+'" class="view course-view">' +
+        '<button class="back-btn" data-action="show-home">→ رجوع لكل الدورات</button>' +
+        '<div class="course-hero">' +
+          '<div>' +
+            '<div class="tag-line">'+c.tag+'</div>' +
+            '<h2>'+c.full+'</h2>' +
+            '<p>'+c.tagline+'</p>' +
+          '</div>' +
+        '</div>' +
+        '<div class="detail-grid">' +
+          '<div class="panel">' +
+            '<h3>الدورة تشمل</h3>' +
+            '<ul class="includes-list">' +
+              c.includes.map(function(i){ return '<li>'+iconCheck+'<span>'+i+'</span></li>'; }).join('') +
+            '</ul>' +
+            '<div class="disclaimer-box">لأي استفسار عن تفاصيل المنهج أو شرح جزء دراسي محدد، هيتم تحويلك مباشرة للأستاذ حمادة — المساعد الذكي بيرد بس على أسئلة الدورة والسعر.</div>' +
+          '</div>' +
+          '<div class="pricing-panel">' +
+            '<div><span class="old">'+c.original+' ريال</span></div>' +
+            '<div class="new">'+c.offer+' <small>ريال / الدورة كاملة</small></div>' +
+            '<div class="save">وفّر '+save(c)+' ريال — خصم '+pct(c)+'%</div>' +
+            '<div class="note">'+c.sessions+' حصص × '+(c.hours/c.sessions).toFixed(1).replace('.0','')+' ساعة تقريبًا ('+c.hours+' ساعة تدريب) — عرض لفترة محدودة وبمقاعد محدودة</div>' +
+            '<button class="btn-primary" style="width:100%;text-align:center;" data-action="show-register" data-course="'+c.id+'">سجّل الآن في '+c.name+'</button>' +
+            '<button class="btn-ghost" style="width:100%;text-align:center;" data-action="ask-course" data-course="'+c.id+'">اسأل المساعد الذكي عن '+c.name+'</button>' +
+            '<button class="btn-ghost" style="width:100%;text-align:center;" data-action="open-chat">تواصل مع الأستاذ حمادة — واتساب '+WHATSAPP+'</button>' +
+          '</div>' +
+        '</div>' +
+      '</section>';
+    }).join('');
+  }
+
+  var EMAIL_TO = "mrdesigner815@gmail.com";
+  /* -----------------------------------------------------------------
+     الإرسال التلقائي الحقيقي لبيانات التسجيل (Web3Forms):
+     1) روح لموقع https://web3forms.com وسجّل بريد mrdesigner815@gmail.com
+     2) هيوصلك مفتاح Access Key على نفس البريد خلال دقيقة تقريبًا.
+     3) الصق المفتاح بدل النص "PASTE_YOUR_WEB3FORMS_ACCESS_KEY_HERE" تحت.
+     من غير المفتاح ده، هيرجع النموذج تلقائيًا لطريقة فتح تطبيق البريد
+     اليدوية (mailto) كخطة احتياطية، وده شغّال أصلًا دلوقتي.
+     --------------------------------------------------------------- */
+  var WEB3FORMS_KEY = "363f2bc3-bdfa-4de7-9a36-0b3835409320";
+  var STAGES = ["المرحلة الابتدائية","المرحلة المتوسطة","المرحلة الثانوية","خريج / متقدم لإعادة الاختبار","مستوى جامعي"];
+
+  function renderRegisterView(){
+    var root = document.getElementById('registerViewRoot');
+    var courseOptions = '<option value="">اختر الدورة</option>' +
+      courses.map(function(c){ return '<option value="'+c.id+'">'+c.full+'</option>'; }).join('');
+    var stageOptions = '<option value="">اختر المرحلة</option>' +
+      STAGES.map(function(s){ return '<option value="'+s+'">'+s+'</option>'; }).join('');
+    root.innerHTML =
+      '<section id="view-register" class="view course-view">' +
+        '<button class="back-btn" data-action="show-home">→ رجوع لكل الدورات</button>' +
+        '<div class="course-hero">' +
+          '<div>' +
+            '<div class="tag-line">التسجيل</div>' +
+            '<h2>استمارة التسجيل</h2>' +
+            '<p>عبّي بياناتك، وهنتواصل معاك على رقم الواتساب لتأكيد التسجيل وخطوات الدفع.</p>' +
+          '</div>' +
+        '</div>' +
+        '<div class="panel" style="margin-top:22px;">' +
+          '<form id="registerForm" class="reg-form" novalidate>' +
+            '<div class="field"><label for="regName">اسم الطالب *</label>' +
+              '<input id="regName" name="regName" type="text" required autocomplete="name" placeholder="مثال: محمد أحمد"></div>' +
+            '<div class="field"><label for="regSchool">اسم المدرسة *</label>' +
+              '<input id="regSchool" name="regSchool" type="text" required placeholder="اسم المدرسة الحالية"></div>' +
+            '<div class="field"><label for="regStage">المرحلة التعليمية *</label>' +
+              '<select id="regStage" name="regStage" required>'+stageOptions+'</select></div>' +
+            '<div class="field"><label for="regCourse">الدورة المطلوب التسجيل فيها *</label>' +
+              '<select id="regCourse" name="regCourse" required>'+courseOptions+'</select></div>' +
+            '<div class="field"><label for="regPhone">رقم واتساب للتواصل *</label>' +
+              '<input id="regPhone" name="regPhone" type="tel" required placeholder="05xxxxxxxx">' +
+              '<span class="hint">محتاجينه عشان نأكّد التسجيل ونرسلّك تفاصيل الدفع.</span></div>' +
+            '<button type="submit" class="btn-primary reg-submit">إرسال بيانات التسجيل</button>' +
+            '<div id="regStatus" class="reg-status"></div>' +
+            '<div class="disclaimer-box">بياناتك بتتحاول تتبعت تلقائيًا لفريق The Examiner على '+EMAIL_TO+' بمجرد الضغط على "إرسال". لو ظهر زرار "فتح تطبيق البريد" أو "واتساب" تحت الفورم، معناه محتاج ضغطة واحدة إضافية منك لإتمام الإرسال — دي خطوة احتياطية بسيطة بتضمن وصول بياناتك دايمًا مهما حصل.</div>' +
+          '</form>' +
+        '</div>' +
+      '</section>';
+
+    document.getElementById('registerForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      var name = document.getElementById('regName').value.trim();
+      var school = document.getElementById('regSchool').value.trim();
+      var stage = document.getElementById('regStage').value;
+      var courseId = document.getElementById('regCourse').value;
+      var phone = document.getElementById('regPhone').value.trim();
+      var status = document.getElementById('regStatus');
+
+      if(!name || !school || !stage || !courseId || !phone){
+        status.className = 'reg-status show err';
+        status.textContent = 'برجاء تعبئة كل الحقول المطلوبة (*) قبل الإرسال.';
+        return;
+      }
+
+      var course = courses.find(function(c){ return c.id===courseId; });
+      var courseName = course ? course.full : courseId;
+      var subject = 'تسجيل جديد – ' + courseName + ' – ' + name;
+      var bodyLines = [
+        'اسم الطالب: ' + name,
+        'اسم المدرسة: ' + school,
+        'المرحلة التعليمية: ' + stage,
+        'الدورة المطلوبة: ' + courseName,
+        'رقم واتساب للتواصل: ' + phone,
+        '',
+        'تم الإرسال من صفحة The Examiner.'
+      ];
+      var submitBtn = document.querySelector('#registerForm .reg-submit');
+      var form = document.getElementById('registerForm');
+
+      function fallbackMailto(note){
+        var mailto = 'mailto:' + EMAIL_TO + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(bodyLines.join('\n'));
+        var waNumber = '966' + WHATSAPP.replace(/^0/, '');
+        var waLink = 'https://wa.me/' + waNumber + '?text=' + encodeURIComponent(bodyLines.join('\n'));
+        status.className = 'reg-status show ok';
+        /* ---------------------------------------------------------------
+           بدل الاعتماد فقط على تحويل تلقائي (window.location.href) —
+           اللي ممكن يتمنع بصمت جوه إطار Artifact محمي (Sandboxed iframe)
+           لو حصل بعد أي انتظار غير متزامن (زي رد fetch أو setTimeout)
+           فيفقد "بصمة تفاعل المستخدم" المطلوبة للتنقل — بنعرض كمان زرارين
+           حقيقيين (روابط <a>) يضغطهم الطالب بنفسه، وده مضمون يشتغل في كل
+           البيئات لأنه تفاعل مباشر منه، مش تحويل برمجي.
+           --------------------------------------------------------------- */
+        status.innerHTML =
+          '<div>' + (note ? note + ' ' : '') + 'اضغط أحد الزرارين دول عشان توصل بياناتك فورًا:</div>' +
+          '<div class="status-actions">' +
+            '<a href="'+mailto+'">📧 فتح تطبيق البريد</a>' +
+            '<a href="'+waLink+'" target="_blank" rel="noopener">💬 إرسال عبر واتساب</a>' +
+          '</div>';
+        try { window.location.href = mailto; } catch(navErr){}
+      }
+
+      // لو مفتاح Web3Forms لسه ما اتظبطش، نستخدم مباشرة طريقة البريد اليدوية
+      if(!WEB3FORMS_KEY || WEB3FORMS_KEY.indexOf('PASTE_') === 0){
+        fallbackMailto();
+        return;
+      }
+
+      status.className = 'reg-status show';
+      status.textContent = 'جاري إرسال بياناتك...';
+      if(submitBtn){ submitBtn.disabled = true; }
+
+      var settled = false;
+      function onceSuccess(){
+        if(settled) return; settled = true;
+        if(submitBtn){ submitBtn.disabled = false; }
+        status.className = 'reg-status show ok';
+        status.textContent = 'تم استلام تسجيلك بنجاح! وصلت بياناتك فورًا لفريق The Examiner، وهيتواصل معاك الأستاذ حمادة قريبًا على واتساب.';
+        if(form){ form.reset(); }
+      }
+      function onceFallback(note){
+        if(settled) return; settled = true;
+        if(submitBtn){ submitBtn.disabled = false; }
+        fallbackMailto(note);
+      }
+
+      /* ---------------------------------------------------------------
+         الإرسال التلقائي محاط بـ try/catch + مهلة زمنية (Timeout) قصوى،
+         عشان لو حصل أي منع من سياسة أمان (زي CSP على صفحات Claude
+         Artifact) أو تعليق غير متوقع في الاتصال، الزرار ميفضلش عالق
+         وغير مستجيب — لازم يوصل لحالة نهائية (نجاح أو رجوع لطريقة
+         البريد اليدوية) خلال ثوانٍ معدودة مهما حصل.
+         --------------------------------------------------------------- */
+      var timeoutId = setTimeout(function(){
+        onceFallback('استغرق الإرسال التلقائي وقتًا أطول من المتوقع.');
+      }, 6000);
+
+      try {
+        fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({
+            access_key: WEB3FORMS_KEY,
+            subject: subject,
+            from_name: 'The Examiner — نموذج التسجيل',
+            'اسم الطالب': name,
+            'اسم المدرسة': school,
+            'المرحلة التعليمية': stage,
+            'الدورة المطلوبة': courseName,
+            'رقم واتساب للتواصل': phone
+          })
+        }).then(function(res){ return res.json(); }).then(function(data){
+          clearTimeout(timeoutId);
+          if(data && data.success){ onceSuccess(); }
+          else { onceFallback('تعذّر الإرسال التلقائي.'); }
+        }).catch(function(){
+          clearTimeout(timeoutId);
+          onceFallback('تعذّر الإرسال التلقائي (تأكد من اتصال الإنترنت).');
+        });
+      } catch(syncErr){
+        clearTimeout(timeoutId);
+        onceFallback('تعذّر الإرسال التلقائي.');
+      }
+    });
+  }
+
+  function prefillRegisterCourse(courseId){
+    var sel = document.getElementById('regCourse');
+    if(sel && courseId && courses.some(function(c){return c.id===courseId;})){ sel.value = courseId; }
+  }
+
+  /* ---------------------------------------------------------------
+     توجيه حقيقي بين "صفحات" منفصلة عن طريق الـ URL hash — كل دورة
+     (وكمان صفحة التسجيل) بقى ليها عنوان مستقل (#course-itc،
+     #register-itc) تقدر ترجع له بزر المتصفح "رجوع"، أو تفتحه مباشرة
+     برابط، مش مجرد إخفاء وإظهار.
+     --------------------------------------------------------------- */
+  function activateView(viewId){
+    document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+    var el = document.getElementById(viewId);
+    if(el){ el.classList.add('active'); } else { document.getElementById('view-home').classList.add('active'); }
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function renderRoute(){
+    var hash = location.hash.replace('#','');
+    if(hash.indexOf('register')===0){
+      var rid = hash.replace('register-','').replace('register','');
+      activateView('view-register');
+      if(rid){ prefillRegisterCourse(rid); }
+      return;
+    }
+    if(hash.indexOf('course-')===0){
+      var id = hash.replace('course-','');
+      if(courses.some(function(c){return c.id===id;})){ activateView('view-'+id); return; }
+    }
+    activateView('view-home');
+  }
+  window.showHome = function(){ if(location.hash){ location.hash=''; } else { renderRoute(); } };
+  window.showRegister = function(courseId){ location.hash = courseId ? ('register-'+courseId) : 'register'; };
+  window.showCourse = function(id){ location.hash = 'course-'+id; };
+  window.scrollToCourses = function(){
+    document.getElementById('coursesSection').scrollIntoView({behavior:'smooth'});
+  };
+
+  renderGrid();
+  renderCourseViews();
+  renderRegisterView();
+  window.addEventListener('hashchange', renderRoute);
+  renderRoute();
+
+  /* ---------------- robot speech bubble rotation ---------------- */
+  var bubbleMsgs = [
+    "أهلاً! أنا المساعد الذكي لـ The Examiner 🤖",
+    "7 اختبارات ودورات… اختر اللي يناسب هدفك",
+    "العروض دلوقتي تبدأ من 900 ريال لفترة محدودة",
+    "اسألني عن أي دورة أو سعر، وأنا هرد فورًا"
+  ];
+  var bi = 0;
+  setInterval(function(){
+    bi = (bi+1) % bubbleMsgs.length;
+    var el = document.getElementById('robotBubble');
+    if(el){ el.textContent = bubbleMsgs[bi]; }
+  }, 3600);
+
+  /* ---------------- chat widget ---------------- */
+  var chatOpened = false;
+  window.openChat = function(){
+    document.getElementById('chatPanel').hidden = false;
+    if(!chatOpened){
+      chatOpened = true;
+      botSay("أهلاً بيك في The Examiner! 👋 بجاوب على أسئلة الدورة، المحتوى التعليمي العام، والأسعار فقط. لو محتاج شرح لجزء دراسي أو خصم إضافي، هوصلك مباشرة بالأستاذ حمادة. اختار قسم من تحت:");
+      renderCategoryMenu();
+    }
+  };
+  window.closeChat = function(){ document.getElementById('chatPanel').hidden = true; };
+
+  var currentCourseContext = null;
+
+  window.askAboutCourse = function(id){
+    openChat();
+    var c = courses.find(function(x){return x.id===id;});
+    currentCourseContext = c;
+    userSay("عايز أعرف تفاصيل "+c.full);
+    setTimeout(function(){ answerCourse(c); renderCategoryMenu(); }, 250);
+  };
+
+  function chatBody(){ return document.getElementById('chatBody'); }
+  function botSay(text){
+    var d = document.createElement('div'); d.className='msg bot'; d.textContent=text;
+    chatBody().appendChild(d); chatBody().scrollTop = chatBody().scrollHeight;
+  }
+  function userSay(text){
+    var d = document.createElement('div'); d.className='msg user'; d.textContent=text;
+    chatBody().appendChild(d); chatBody().scrollTop = chatBody().scrollHeight;
+  }
+
+  function allPricesText(){
+    return courses.map(function(c){
+      return c.full+": كان "+c.original+" ريال، دلوقتي بعرض الإطلاق "+c.offer+" ريال (خصم "+pct(c)+"%)";
+    }).join(" — ");
+  }
+
+  function cheapestCourse(){
+    return courses.reduce(function(a,b){ return b.offer<a.offer? b:a; }, courses[0]);
+  }
+
+  function findCourseMention(q){
+    var map = {
+      itc: ["itc","اي تي سي","آي تي سي"],
+      step: ["step","ستيب","الستيب"],
+      sat: ["sat","sat english","سات","الساط","ساط انجلش","sat انجلش"],
+      toefl: ["toefl","ibt","توفل","التوفل","الايبيتي"],
+      ielts: ["ielts","ايلتس","آيلتس","الايلتس","الآيلتس"],
+      general: ["general","english general","جنرال","انجلش جنرال","الجنرال"],
+      gat: ["gat","gat english","جات","القدرات","قدرات","اللفظي","القسم اللفظي"]
+    };
+    for(var id in map){
+      var kws = map[id];
+      for(var i=0;i<kws.length;i++){
+        if(q.indexOf(kws[i])>-1) return courses.find(function(c){return c.id===id;});
+      }
+    }
+    return null;
+  }
+
+  function answerCourse(c){
+    botSay(c.full+" — "+c.tagline+". السعر الأصلي "+c.original+" ريال، وسعر عرض الإطلاق دلوقتي "+c.offer+" ريال (توفير "+save(c)+" ريال، خصم "+pct(c)+"%). الدورة "+c.sessions+" حصص حية بإجمالي "+c.hours+" ساعة تقريبًا مع الأستاذ حمادة، وتشمل اختبار تجريبي كامل + اختبار تدريبي + تقرير أداء + شهادة إتمام.");
+  }
+
+  /* ---------------------------------------------------------------
+     القائمة المحدَّدة لأسئلة المساعد الذكي — مقصورة عمدًا على:
+     (1) استفسارات عن الدورة، (2) نظرة عامة على المحتوى التعليمي،
+     (3) الأسعار. أي طلب خصم أو شرح لجزء دراسي محدد يُستبعد من هذه
+     القائمة ويُحوَّل صراحة للأستاذ حمادة (انظر guard clauses بالأسفل).
+     --------------------------------------------------------------- */
+  var QUESTION_BANK = {
+    course: {
+      label: "أسئلة عن الدورة",
+      items: [
+        { q:"إيه الدورات المتاحة حاليًا؟", keywords:["الدورات المتاحة","اي دورات","الدورات الموجودة","دورات ايه"], a:function(){
+            return "الدورات المتاحة حاليًا: " + courses.map(function(c){return c.full;}).join("، ") + ". تحب تعرف تفاصيل أي واحدة منها؟";
+        }},
+        { q:"كام عدد الحصص والساعات؟", keywords:["عدد الحصص","كام حصة","كام ساعة","عدد الساعات","مدة الدورة","هتاخد قد ايه"], a:function(){
+            if(currentCourseContext){ var c=currentCourseContext; return c.full+": "+c.sessions+" حصص حية بإجمالي "+c.hours+" ساعة تقريبًا."; }
+            return courses.map(function(c){ return c.full+": "+c.sessions+" حصص / "+c.hours+" ساعة"; }).join(" — ");
+        }},
+        { q:"مين اللي هيقدّم التدريب؟", keywords:["مين المدرب","مين هيدرب","مين هيدرس","مين اللي يدرس","مدرب الدورة","مين بيقدم"], a:function(){
+            return "التدريب الحي في الاختبارات والدورات السبع كلها بيقدّمه الأستاذ حمادة مباشرة.";
+        }},
+        { q:"هل الحصص حية (Live) ولا مسجّلة؟", keywords:["حي ولا مسجل","لايف","مباشر ولا مسجل","تسجيل ولا مباشر","اونلاين مباشر"], a:function(){
+            return "كل الحصص في السبع دورات حصص حية (Live) مباشرة مع الأستاذ حمادة، مش تسجيلات جاهزة.";
+        }},
+        { q:"هل يوجد اختبار تجريبي (Mock Test) ضمن الدورة؟", keywords:["mock test","اختبار تجريبي","محاكاة","نفس الاختبار الحقيقي"], a:function(){
+            return "أيوه، كل دورة فيها اختبار Mock Test تجريبي كامل بنفس توقيت الاختبار الحقيقي، بالإضافة لاختبار Practice Quiz تدريبي إضافي (30 سؤالًا).";
+        }},
+        { q:"هل بحصل على شهادة إتمام؟", keywords:["شهادة","سيرتفيكيت","شهادة اتمام","certificate"], a:function(){
+            return "أيوه، كل الدورات السبع بتنتهي بشهادة إتمام معتمدة من GATMentor.";
+        }},
+        { q:"هل فيه متابعة أو تقرير أداء فردي؟", keywords:["متابعة فردية","تقرير اداء","تقرير الاداء","متابعة الطالب","تقييم فردي","تحليل الاداء","تحليل اداء","تقرير المستوى","تقرير مستوى","مستواي ايه","تحللوا مستواي","تحليل مستواي","تقرير عن مستواي","تقرير","تحليل","مستواي"], a:function(){
+            return "أيوه، بعد كل اختبار بنحلل أداء الطالب قسم بقسم، ونسلّمه تقرير واضح عن مستواه الحالي ونقاط التحسين، بالإضافة لمتابعة فردية عبر واتساب.";
+        }}
+      ]
+    },
+    content: {
+      label: "أسئلة عن المحتوى التعليمي",
+      items: [
+        { q:"إيه الأقسام اللي بتغطيها الدورة؟", keywords:["الاقسام","بيغطي ايه","محتوى الدورة","مواضيع الدورة","بتتكلم عن ايه"], a:function(){
+            if(currentCourseContext){ return currentCourseContext.full+" بتغطي: "+currentCourseContext.desc; }
+            return "كل دورة بتغطي مهارات مختلفة حسب طبيعة الاختبار — قولّي اسم الاختبار (زي IELTS أو TOEFL) وهقولك بالظبط إيه اللي بيغطيه.";
+        }},
+        { q:"هل الدورة بتغطي كل أقسام الاختبار الرسمي؟", keywords:["الاختبار الرسمي","كل الاقسام","نفس الاختبار الفعلي"], a:function(){
+            return "أيوه، كل دورة مصممة على نفس أقسام الاختبار الرسمي بالظبط، عشان التدريب يكون مطابق لتجربة الاختبار الحقيقي.";
+        }},
+        { q:"هل المحتوى مناسب للمبتدئين ولا محتاج مستوى معين؟", keywords:["مبتدئين","مستوى معين","لازم مستوى","للمبتدئ","مستواي ضعيف"], a:function(){
+            return "المحتوى مصمم يبدأ من الأساسيات ويتدرّج، فيصلح للمبتدئين وكمان لمن عنده مستوى متوسط وعايز صقل مهاراته قبل الاختبار.";
+        }},
+        { q:"هل فيه اختبار تدريبي إضافي غير الـ Mock Test؟", keywords:["practice quiz","اختبار تدريبي","تمارين اضافية"], a:function(){
+            return "أيوه، كل دورة فيها اختبار Practice Quiz إضافي (30 سؤالًا) غير اختبار الـ Mock Test الرئيسي.";
+        }},
+        { q:"هل المحتوى باللغة الإنجليزية بالكامل؟", keywords:["لغة المحتوى","بالانجليزي","لغة الدورة","عربي ولا انجليزي"], a:function(){
+            return "أيوه، محتوى الاختبارات والدورات السبع كله باللغة الإنجليزية بالكامل، مطابق للغة الاختبار الرسمي.";
+        }}
+      ]
+    },
+    price: {
+      label: "أسئلة عن الأسعار",
+      items: [
+        { q:"كام سعر كل دورة؟", keywords:["سعر كل دورة","كل الاسعار","الاسعار","قائمة الاسعار"], a:function(){ return allPricesText(); } },
+        { q:"إيه أرخص دورة متاحة؟", keywords:["ارخص","اقل سعر"], a:function(){
+            var c = cheapestCourse();
+            return "أقل سعر عرض حاليًا هو "+c.full+" بسعر "+c.offer+" ريال (بدل "+c.original+" ريال).";
+        }},
+        { q:"سعر الدورة دي كام بالظبط؟", keywords:["سعر الدورة دي","بكام الدورة","سعرها كام","تكلفة الدورة","سعر دورة"], a:function(){
+            if(currentCourseContext){ var c=currentCourseContext; return c.full+": كان "+c.original+" ريال، وبعرض الإطلاق دلوقتي "+c.offer+" ريال (خصم "+pct(c)+"%، توفير "+save(c)+" ريال)."; }
+            return "قولّي اسم الاختبار اللي محتاج سعره بالظبط (زي STEP أو IELTS) وهرد عليك فورًا.";
+        }},
+        { q:"هل السعر يشمل كل حاجة ولا فيه رسوم إضافية؟", keywords:["يشمل ايه","رسوم اضافية","فيه مصاريف تانية","السعر يشمل","رسوم اخرى"], a:function(){
+            return "سعر العرض المعروض يشمل: الاختبار التجريبي، الاختبار التدريبي، كل الحصص الحية، تقرير الأداء، والشهادة — بدون رسوم خفية.";
+        }},
+        { q:"لحد إمتى عرض الإطلاق متاح؟", keywords:["لحد امتى","العرض هينتهي","اخر موعد للعرض","العرض لحد","هيخلص امتى"], a:function(){
+            return "عرض الإطلاق متاح لفترة محدودة وبعدد مقاعد محدود لكل مجموعة، وممكن ينتهي في أي وقت. للتأكد من آخر موعد بالظبط، تواصل مع الأستاذ حمادة على واتساب "+WHATSAPP+".";
+        }}
+      ]
+    }
+  };
+
+  function paintChips(chips){
+    var wrap = document.getElementById('quickReplies');
+    wrap.innerHTML = chips.map(function(c,i){ return '<button class="chip" data-i="'+i+'">'+c.label+'</button>'; }).join('');
+    Array.prototype.forEach.call(wrap.querySelectorAll('.chip'), function(btn,i){ btn.onclick = chips[i].action; });
+  }
+
+  function renderCategoryMenu(){
+    var cats = Object.keys(QUESTION_BANK);
+    var chips = cats.map(function(k){
+      return { label:QUESTION_BANK[k].label, action:function(){ userSay(QUESTION_BANK[k].label); showCategoryQuestions(k); } };
+    });
+    chips.push({ label:"تواصل مع الأستاذ حمادة", action:function(){ userSay("تواصل مع الأستاذ حمادة"); contactTrainer(); } });
+    paintChips(chips);
+  }
+
+  function showCategoryQuestions(catKey){
+    var cat = QUESTION_BANK[catKey];
+    var chips = cat.items.map(function(item){
+      return { label:item.q, action:function(){
+        userSay(item.q);
+        setTimeout(function(){ botSay(item.a()); showCategoryQuestions(catKey); }, 200);
+      }};
+    });
+    chips.push({ label:"⬅ رجوع للأقسام", action:function(){ renderCategoryMenu(); } });
+    paintChips(chips);
+  }
+
+  function contactTrainer(){
+    botSay("تقدر تتواصل مباشرة مع الأستاذ حمادة على واتساب: "+WHATSAPP+" — متاح للرد على استفساراتك وتفاصيل التسجيل.");
+    renderCategoryMenu();
+  }
+
+  /* يدوّر على أي سؤال حر مطابق (ولو جزئيًا) لأحد أسئلة القائمة
+     المحدَّدة الثلاثة، ويرجّع إجابته الجاهزة بدل ما يوجّه المستخدم
+     لضغط الأزرار بس — ده هو اللي بيدّي المساعد صلاحية فعلية للرد
+     بالتفصيل على أي استفسار داخل نطاقه (الدورة / المحتوى العام / السعر) */
+  function findBankAnswer(q){
+    var cats = Object.keys(QUESTION_BANK);
+    for(var ci=0; ci<cats.length; ci++){
+      var items = QUESTION_BANK[cats[ci]].items;
+      for(var ii=0; ii<items.length; ii++){
+        var kws = items[ii].keywords || [];
+        for(var ki=0; ki<kws.length; ki++){
+          if(q.indexOf(kws[ki])>-1){ return items[ii]; }
+        }
+      }
+    }
+    return null;
+  }
+
+  /* free-text input: نفس القيود (خصم / شرح دراسي مستبعدين دايمًا)،
+     لكن أي استفسار حر داخل نطاق الدورة/المحتوى/السعر بيتجاوب عليه
+     بالتفصيل من قاعدة الأسئلة المحدَّدة قبل أي تحويل لقائمة الأزرار */
+  function handleQuery(raw){
+    var q = (raw||"").toLowerCase().trim();
+    if(!q) return;
+
+    // discount / negotiation — no authority, ever
+    if(/خصم|تخفيض|أرخص سعر|تقدر تنزل|ينزل السعر|تفاوض|اقل سعر إضافي|خصم إضافي/.test(q)){
+      botSay("العرض الحالي المعروض على الصفحة هو أفضل سعر متاح، ومفيش عندي صلاحية إني أزوّد الخصم أو أغيّر السعر بنفسي. لو حابب تتناقش في خصم إضافي أو ظروف خاصة، الأستاذ حمادة هو صاحب القرار — تواصل معاه مباشرة على واتساب "+WHATSAPP+".");
+      renderCategoryMenu();
+      return;
+    }
+
+    // subject-content explanation (teaching) — must go to trainer, not general content overview
+    if(/اشرح|فسر|قاعدة|درس معين|سؤال في الاختبار|كيف أحل|طريقة حل|شرح جزء|حل مسألة/.test(q)){
+      botSay("شرح أي جزء دراسي أو قاعدة داخل المنهج أو حل أسئلة مسؤولية الأستاذ حمادة مباشرة، وأنا بجاوب بس على أسئلة الدورة والمحتوى العام والسعر. كلّمه على واتساب "+WHATSAPP+" وهيرد عليك بنفسه.");
+      renderCategoryMenu();
+      return;
+    }
+
+    if(/تواصل|واتساب|رقم|كلم|اتصل/.test(q)){ contactTrainer(); return; }
+
+    var mentioned = findCourseMention(q);
+    if(mentioned){ currentCourseContext = mentioned; }
+
+    // يدوّر أول حاجة على إجابة جاهزة من قاعدة الأسئلة المحدَّدة (الدورة/المحتوى/السعر)
+    var bankItem = findBankAnswer(q);
+    if(bankItem){ botSay(bankItem.a()); renderCategoryMenu(); return; }
+
+    if(mentioned){ answerCourse(mentioned); renderCategoryMenu(); return; }
+
+    botSay("بجاوب بس على أسئلة عن الدورة، محتواها التعليمي العام، أو سعرها. اختار من الأقسام تحت، أو اكتب سؤالك بصيغة تانية:");
+    renderCategoryMenu();
+  }
+
+  window.sendChat = function(){
+    var input = document.getElementById('chatInput');
+    var val = input.value.trim();
+    if(!val) return;
+    userSay(val);
+    input.value = '';
+    setTimeout(function(){ handleQuery(val); }, 200);
+  };
+
+  /* ---------------------------------------------------------------
+     كل التفاعل مربوط من هنا فقط (addEventListener) بدل خصائص
+     onclick داخل الـ HTML، عشان يشتغل حتى لو الصفحة معروضة تحت
+     سياسة أمان (CSP) بتمنع تنفيذ الخصائص المضمّنة (inline handlers).
+     الأزرار الثابتة والمولَّدة ديناميكيًا (كروت الدورات وصفحاتها)
+     بتتلقط بنفس المستمع الواحد عن طريق data-action.
+     --------------------------------------------------------------- */
+  document.addEventListener('click', function(e){
+    var el = e.target.closest('[data-action]');
+    if(!el) return;
+    var action = el.getAttribute('data-action');
+    var courseId = el.getAttribute('data-course');
+    if(action === 'open-chat') openChat();
+    else if(action === 'close-chat') closeChat();
+    else if(action === 'scroll-courses') scrollToCourses();
+    else if(action === 'send-chat') sendChat();
+    else if(action === 'show-home') showHome();
+    else if(action === 'show-course') showCourse(courseId);
+    else if(action === 'ask-course') askAboutCourse(courseId);
+    else if(action === 'show-register') showRegister(courseId);
+  });
+
+  var chatInputEl = document.getElementById('chatInput');
+  if(chatInputEl){
+    chatInputEl.addEventListener('keydown', function(e){
+      if(e.key === 'Enter'){ sendChat(); }
+    });
+  }
+
+})();
+</script>
+
+</body>
+</html>
