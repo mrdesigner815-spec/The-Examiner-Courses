@@ -378,6 +378,14 @@
   .chat-head span{font-size:.95rem;color:rgba(255,255,255,.75);}
   .chat-close{margin-inline-start:auto;background:rgba(255,255,255,.12);border:none;color:#fff;
     width:42px;height:42px;border-radius:50%;font-size:1.25rem;flex:none;}
+  @media (max-width:640px){
+    /* موبايل — تصغير رأس الشات عشان يبان كامل وواضح في الشاشة الصغيرة */
+    .chat-head{padding:12px 14px;gap:8px;}
+    .chat-head svg{width:26px;height:26px;}
+    .chat-head strong{font-size:.92rem;line-height:1.25;}
+    .chat-head span{font-size:.72rem;}
+    .chat-close{width:32px;height:32px;font-size:.95rem;}
+  }
   .chat-disclaimer{
     background:var(--paper-2);color:var(--text-muted);font-size:.95rem;line-height:1.55;padding:14px 22px;border-bottom:1px solid var(--border);flex:none;
   }
@@ -391,6 +399,25 @@
     padding:12px 18px;font-size:1.02rem;font-weight:700;color:var(--text);
   }
   .chip:hover{border-color:var(--gold);}
+
+  /* قائمة الأسئلة الشائعة داخل رسالة البوت — كل سؤال بيفتح إجابته
+     مباشرة تحته بالظبط (Accordion)، بدل ما تتبعت كرسالة منفصلة. */
+  .faq-list{display:flex;flex-direction:column;}
+  .faq-item{border-bottom:1px solid var(--border);}
+  .faq-item:last-child{border-bottom:none;}
+  .faq-q{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    width:100%;background:transparent;border:none;color:inherit;
+    padding:11px 2px;font-weight:800;font-size:1rem;text-align:right;font-family:inherit;line-height:1.5;
+  }
+  .faq-caret{transition:transform .2s ease;color:var(--gold);flex:none;font-size:.9rem;}
+  .faq-item.open .faq-caret{transform:rotate(180deg);}
+  .faq-a{
+    max-height:0;overflow:hidden;transition:max-height .28s ease, padding .28s ease;
+    font-size:.94rem;color:var(--text-muted);padding:0 2px;line-height:1.75;
+  }
+  .faq-item.open .faq-a{max-height:420px;padding:0 2px 13px;}
+
   .chat-input-row{display:flex;gap:12px;padding:18px;border-top:1px solid var(--border);background:var(--surface);flex:none;}
   .chat-input-row input{
     flex:1;border:1px solid var(--border);border-radius:16px;padding:16px 18px;
@@ -942,6 +969,13 @@
     var d = document.createElement('div'); d.className='msg user'; d.textContent=text;
     chatBody().appendChild(d); chatBody().scrollTop = chatBody().scrollHeight;
   }
+  /* رسالة بوت بمحتوى HTML (تُستخدم لقائمة الأسئلة الشائعة أدناه —
+     المحتوى مولَّد برمجيًا من QUESTION_BANK فقط، مفيش أي إدخال حر
+     من المستخدم بيتحط هنا، فمفيش خطورة أمنية). */
+  function botSayHtml(html){
+    var d = document.createElement('div'); d.className='msg bot'; d.innerHTML=html;
+    chatBody().appendChild(d); chatBody().scrollTop = chatBody().scrollHeight;
+  }
 
   function allPricesText(){
     return courses.map(function(c){
@@ -1068,16 +1102,27 @@
     paintChips(chips);
   }
 
+  /* ---------------------------------------------------------------
+     قائمة أسئلة شائعة (Accordion): كل سؤال بيظهر، وبمجرد الضغط
+     عليه تنفتح إجابته مباشرة تحته في نفس المكان — بدل ما تتبعت
+     كرسالة منفصلة في المحادثة، عشان تبقى الإجابة واضحة تحت سؤالها
+     بالظبط زي ما طُلب.
+     --------------------------------------------------------------- */
   function showCategoryQuestions(catKey){
     var cat = QUESTION_BANK[catKey];
-    var chips = cat.items.map(function(item){
-      return { label:item.q, action:function(){
-        userSay(item.q);
-        setTimeout(function(){ botSay(item.a()); showCategoryQuestions(catKey); }, 200);
-      }};
-    });
-    chips.push({ label:"⬅ رجوع للأقسام", action:function(){ renderCategoryMenu(); } });
-    paintChips(chips);
+    var listHtml = '<div class="faq-list">' +
+      cat.items.map(function(item, idx){
+        return '' +
+          '<div class="faq-item" data-faq-item="'+catKey+'-'+idx+'">' +
+            '<button type="button" class="faq-q" data-action="toggle-faq" data-faq="'+catKey+'-'+idx+'">' +
+              '<span>'+item.q+'</span><span class="faq-caret">˅</span>' +
+            '</button>' +
+            '<div class="faq-a">'+item.a()+'</div>' +
+          '</div>';
+      }).join('') +
+    '</div>';
+    botSayHtml(listHtml);
+    paintChips([{ label:"⬅ رجوع للأقسام", action:function(){ renderCategoryMenu(); } }]);
   }
 
   function contactTrainer(){
@@ -1168,6 +1213,14 @@
     else if(action === 'show-course') showCourse(courseId);
     else if(action === 'ask-course') askAboutCourse(courseId);
     else if(action === 'show-register') showRegister(courseId);
+    else if(action === 'toggle-faq'){
+      var faqId = el.getAttribute('data-faq');
+      var faqItem = document.querySelector('[data-faq-item="'+faqId+'"]');
+      if(faqItem){
+        faqItem.classList.toggle('open');
+        chatBody().scrollTop = chatBody().scrollHeight;
+      }
+    }
   });
 
   var chatInputEl = document.getElementById('chatInput');
